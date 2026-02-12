@@ -1,0 +1,1227 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pampam AI Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .dashboard {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 40px;
+        max-width: 560px;
+        width: 100%;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        color: white;
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .header .emoji {
+        font-size: 48px;
+        display: block;
+        margin-bottom: 12px;
+      }
+
+      .header p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+        font-weight: 400;
+      }
+
+      .control-section {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .control-section h2 {
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+      }
+
+      /* QR Code Section */
+      .qr-container {
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      #qrCode {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        background: white;
+        padding: 16px;
+      }
+
+      .qr-status {
+        margin-top: 12px;
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .connection-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .connection-indicator.connected {
+        background: #22c55e;
+      }
+
+      .connection-indicator.disconnected {
+        background: #ef4444;
+      }
+
+      .phone-number {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 13px;
+        margin-top: 8px;
+      }
+
+      /* Status Badge */
+      .status-display {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .status-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      .status-badge {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .status-badge.on {
+        background: rgba(34, 197, 94, 0.3);
+        color: #22c55e;
+        border: 1px solid rgba(34, 197, 94, 0.5);
+      }
+
+      .status-badge.off {
+        background: rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.5);
+      }
+
+      /* Toggle Switch */
+      .toggle-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .toggle-label {
+        color: white;
+        font-size: 15px;
+        font-weight: 500;
+      }
+
+      .toggle-switch {
+        position: relative;
+        width: 60px;
+        height: 30px;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(239, 68, 68, 0.4);
+        transition: 0.4s;
+        border-radius: 30px;
+        border: 2px solid rgba(239, 68, 68, 0.6);
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: rgba(34, 197, 94, 0.4);
+        border-color: rgba(34, 197, 94, 0.6);
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(30px);
+      }
+
+      /* Input Field */
+      .input-group {
+        margin-bottom: 20px;
+      }
+
+      .input-group label {
+        display: block;
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 14px;
+        font-family: "Inter", sans-serif;
+        transition: all 0.3s ease;
+      }
+
+      .input-group input:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .input-group input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      /* Button */
+      .btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* Toast Notification */
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+        pointer-events: none;
+        z-index: 1000;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: all;
+      }
+
+      .toast.success {
+        border-left: 4px solid #22c55e;
+      }
+
+      .toast.error {
+        border-left: 4px solid #ef4444;
+      }
+
+      .toast-icon {
+        font-size: 20px;
+      }
+
+      .toast-message {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      /* Loading State */
+      .loading {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        .dashboard {
+          padding: 30px 24px;
+        }
+
+        .header h1 {
+          font-size: 28px;
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard">
+      <div class="header">
+        <span class="emoji">🤖</span>
+        <h1>Pampam AI</h1>
+        <p>WhatsApp Bot Control Panel</p>
+      </div>
+
+      <!-- WhatsApp Connection Section -->
+      <div class="control-section">
+        <h2>WhatsApp Connection</h2>
+        <div id="whatsappStatus">
+          <div class="connection-indicator disconnected"></div>
+          <span class="qr-status">Connecting...</span>
+        </div>
+        <div id="qrCodeContainer" class="qr-container hidden">
+          <img id="qrCode" alt="QR Code" />
+          <p class="qr-status">Scan kode QR dengan WhatsApp</p>
+        </div>
+        <div id="connectedInfo" class="hidden">
+          <p class="phone-number">
+            📱 Connected: <span id="phoneNumber">-</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Bot Control Section -->
+      <div class="control-section">
+        <div class="status-display">
+          <span class="status-label">Status Bot</span>
+          <span class="status-badge off" id="statusBadge">OFF</span>
+        </div>
+
+        <div class="toggle-container">
+          <span class="toggle-label">Aktifkan Bot</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="botToggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Focus Status Section -->
+      <div class="control-section">
+        <h2>Focus Status</h2>
+        <div class="input-group">
+          <label for="focusStatus">Apa yang Farhan lagi kerjain?</label>
+          <input
+            type="text"
+            id="focusStatus"
+            placeholder="lagi fokus ngerjain backend project"
+            maxlength="100"
+          />
+        </div>
+        <button class="btn" id="updateBtn">
+          <span id="btnText">Update Focus Status</span>
+          <span class="loading" id="btnLoading" style="display: none"></span>
+        </button>
+      </div>
+
+      <!-- Whitel ist Section -->
+      <div class="control-section">
+        <h2>Whitelist Numbers (Max 5)</h2>
+        <p
+          style="
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            margin-bottom: 16px;
+          "
+        >
+          Nomor WhatsApp yang diizinkan chat dengan bot
+        </p>
+        <div id="whitelistInputs">
+          <div class="input-group">
+            <label for="number1">Nomor 1</label>
+            <input
+              type="text"
+              id="number1"
+              placeholder="628123456789"
+              maxlength="15"
+            />
+          </div>
+          <div class="input-group">
+            <label for="number2">Nomor 2</label>
+            <input
+              type="text"
+              id="number2"
+              placeholder="628123456789"
+              maxlength="15"
+            />
+          </div>
+          <div class="input-group">
+            <label for="number3">Nomor 3</label>
+            <input
+              type="text"
+              id="number3"
+              placeholder="628123456789"
+              maxlength="15"
+            />
+          </div>
+          <div class="input-group">
+            <label for="number4">Nomor 4</label>
+            <input
+              type="text"
+              id="number4"
+              placeholder="628123456789"
+              maxlength="15"
+            />
+          </div>
+          <div class="input-group">
+            <label for="number5">Nomor 5</label>
+            <input
+              type="text"
+              id="number5"
+              placeholder="628123456789"
+              maxlength="15"
+            />
+          </div>
+        </div>
+        <button class="btn" id="saveWhitelistBtn">
+          <span id="whitelistBtnText">Simpan Whitelist</span>
+          <span
+            class="loading"
+            id="whitelistBtnLoading"
+            style="display: none"
+          ></span>
+        </button>
+      </div>
+
+      <!-- VIP Contacts Section -->
+      <div class="control-section">
+        <h2>VIP Contacts</h2>
+        <p
+          style="
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            margin-bottom: 16px;
+          "
+        >
+          Kelola kontak VIP yang mendapat response spesial
+        </p>
+
+        <!-- VIP Contacts List -->
+        <div id="vipContactsList" style="margin-bottom: 16px">
+          <!-- VIP contacts will be loaded here -->
+        </div>
+
+        <!-- Add VIP Contact Form -->
+        <div
+          style="
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+          "
+        >
+          <h3
+            style="
+              color: white;
+              font-size: 14px;
+              font-weight: 600;
+              margin-bottom: 12px;
+            "
+          >
+            Tambah VIP Contact
+          </h3>
+          <div class="input-group">
+            <label for="vipPhoneNumber">Nomor WhatsApp</label>
+            <input
+              type="text"
+              id="vipPhoneNumber"
+              placeholder="628123456789"
+              maxlength="15"
+            />
+          </div>
+          <div class="input-group">
+            <label for="vipName">Nama</label>
+            <input type="text" id="vipName" placeholder="Contoh: Viia" />
+          </div>
+          <div class="input-group">
+            <label for="vipRelationship">Hubungan (opsional)</label>
+            <input
+              type="text"
+              id="vipRelationship"
+              placeholder="Contoh: temen cewe baru"
+            />
+          </div>
+          <button class="btn" id="addVIPBtn">
+            <span id="addVIPBtnText">+ Tambah VIP Contact</span>
+            <span
+              class="loading"
+              id="addVIPBtnLoading"
+              style="display: none"
+            ></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Configuration Section -->
+      <div class="control-section">
+        <h2>AI Configuration</h2>
+        <p
+          style="
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            margin-bottom: 16px;
+          "
+        >
+          Pilih AI provider dan model yang digunakan
+        </p>
+
+        <!-- Provider Selection -->
+        <div class="input-group">
+          <label>Provider</label>
+          <div style="display: flex; gap: 16px; margin-top: 8px">
+            <label style="display: flex; align-items: center; cursor: pointer">
+              <input
+                type="radio"
+                name="provider"
+                value="openrouter"
+                id="providerOpenRouter"
+                checked
+                style="margin-right: 8px"
+              />
+              <span style="color: white">OpenRouter (FREE)</span>
+            </label>
+            <label style="display: flex; align-items: center; cursor: pointer">
+              <input
+                type="radio"
+                name="provider"
+                value="openai"
+                id="providerOpenAI"
+                style="margin-right: 8px"
+              />
+              <span style="color: white">OpenAI</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Model Selection -->
+        <div class="input-group">
+          <label for="aiModel">Model</label>
+          <select
+            id="aiModel"
+            style="
+              width: 100%;
+              padding: 12px 16px;
+              border: 2px solid rgba(255, 255, 255, 0.2);
+              border-radius: 12px;
+              background: rgba(255, 255, 255, 0.1);
+              color: white;
+              font-size: 14px;
+              font-family: &quot;Inter&quot;, sans-serif;
+            "
+          >
+            <option value="meta-llama/llama-3.3-70b-instruct">
+              Meta Llama 3.3 70B (Recommended)
+            </option>
+            <option value="deepseek/deepseek-r1">
+              DeepSeek R1 (Reasoning)
+            </option>
+            <option value="openrouter/free">Auto-select Free Model</option>
+            <option value="google/gemini-flash-1.5">
+              Google Gemini Flash 1.5
+            </option>
+            <option value="nvidia/nemotron-3-nano-30b">
+              NVIDIA Nemotron 3 Nano
+            </option>
+          </select>
+        </div>
+
+        <!-- API Key -->
+        <div class="input-group">
+          <label for="aiApiKey">API Key</label>
+          <input
+            type="password"
+            id="aiApiKey"
+            placeholder="sk-or-v1-... atau sk-..."
+            maxlength="200"
+          />
+          <p
+            style="
+              color: rgba(255, 255, 255, 0.6);
+              font-size: 12px;
+              margin-top: 4px;
+            "
+          >
+            OpenRouter:
+            <a
+              href="https://openrouter.ai/keys"
+              target="_blank"
+              style="color: #667eea"
+              >Get API Key</a
+            >
+            (FREE!)
+          </p>
+        </div>
+
+        <button class="btn" id="saveAIConfigBtn">
+          <span id="aiConfigBtnText">Simpan AI Config</span>
+          <span
+            class="loading"
+            id="aiConfigBtnLoading"
+            style="display: none"
+          ></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">
+      <span class="toast-icon" id="toastIcon">✓</span>
+      <span class="toast-message" id="toastMessage">Success!</span>
+    </div>
+
+    <script>
+      const botToggle = document.getElementById("botToggle");
+      const statusBadge = document.getElementById("statusBadge");
+      const focusStatusInput = document.getElementById("focusStatus");
+      const updateBtn = document.getElementById("updateBtn");
+      const btnText = document.getElementById("btnText");
+      const btnLoading = document.getElementById("btnLoading");
+      const toast = document.getElementById("toast");
+      const toastIcon = document.getElementById("toastIcon");
+      const toastMessage = document.getElementById("toastMessage");
+      const qrCodeContainer = document.getElementById("qrCodeContainer");
+      const qrCodeImage = document.getElementById("qrCode");
+      const whatsappStatus = document.getElementById("whatsappStatus");
+      const connectedInfo = document.getElementById("connectedInfo");
+      const phoneNumber = document.getElementById("phoneNumber");
+
+      // Whitelist elements
+      const number1 = document.getElementById("number1");
+      const number2 = document.getElementById("number2");
+      const number3 = document.getElementById("number3");
+      const number4 = document.getElementById("number4");
+      const number5 = document.getElementById("number5");
+      const saveWhitelistBtn = document.getElementById("saveWhitelistBtn");
+      const whitelistBtnText = document.getElementById("whitelistBtnText");
+      const whitelistBtnLoading = document.getElementById(
+        "whitelistBtnLoading",
+      );
+
+      // Show toast notification
+      function showToast(message, type = "success") {
+        toast.className = `toast ${type}`;
+        toastIcon.textContent = type === "success" ? "✓" : "✕";
+        toastMessage.textContent = message;
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      // Load WhatsApp status
+      async function loadWhatsAppStatus() {
+        try {
+          const response = await fetch("/whatsapp/status");
+          const data = await response.json();
+
+          const indicator = whatsappStatus.querySelector(
+            ".connection-indicator",
+          );
+          const statusText = whatsappStatus.querySelector(".qr-status");
+
+          if (data.connected && data.ready) {
+            // Connected
+            indicator.className = "connection-indicator connected";
+            statusText.textContent = "WhatsApp Terhubung";
+            qrCodeContainer.classList.add("hidden");
+            connectedInfo.classList.remove("hidden");
+
+            if (data.phoneNumber) {
+              phoneNumber.textContent = data.phoneNumber;
+            }
+          } else {
+            // Not connected, show QR
+            indicator.className = "connection-indicator disconnected";
+            statusText.textContent = "Belum Terhubung";
+            connectedInfo.classList.add("hidden");
+
+            // Load QR code
+            loadQRCode();
+          }
+        } catch (error) {
+          console.error("Error loading WhatsApp status:", error);
+        }
+      }
+
+      // Load QR code
+      async function loadQRCode() {
+        try {
+          const response = await fetch("/whatsapp/qr");
+          const data = await response.json();
+
+          if (data.success && data.qrCode) {
+            qrCodeImage.src = data.qrCode;
+            qrCodeContainer.classList.remove("hidden");
+          } else {
+            qrCodeContainer.classList.add("hidden");
+          }
+        } catch (error) {
+          console.error("Error loading QR code:", error);
+        }
+      }
+
+      // Load current bot status
+      async function loadBotStatus() {
+        try {
+          const response = await fetch("/bot/status");
+          const data = await response.json();
+
+          botToggle.checked = data.active;
+          statusBadge.textContent = data.active ? "ON" : "OFF";
+          statusBadge.className = `status-badge ${data.active ? "on" : "off"}`;
+        } catch (error) {
+          console.error("Error loading bot status:", error);
+          showToast("Gagal memuat status bot", "error");
+        }
+      }
+
+      // Load current focus status
+      async function loadFocusStatus() {
+        try {
+          const response = await fetch("/bot/focus-status");
+          const data = await response.json();
+
+          if (data.success) {
+            focusStatusInput.value = data.focusStatus;
+          }
+        } catch (error) {
+          console.error("Error loading focus status:", error);
+        }
+      }
+
+      // Toggle bot ON/OFF
+      botToggle.addEventListener("change", async () => {
+        const isOn = botToggle.checked;
+
+        try {
+          const response = await fetch(`/bot/${isOn ? "on" : "off"}`, {
+            method: "POST",
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            statusBadge.textContent = isOn ? "ON" : "OFF";
+            statusBadge.className = `status-badge ${isOn ? "on" : "off"}`;
+            showToast(
+              `Bot berhasil di${isOn ? "aktifkan" : "nonaktifkan"}`,
+              "success",
+            );
+          } else {
+            botToggle.checked = !isOn;
+            showToast("Gagal mengubah status bot", "error");
+          }
+        } catch (error) {
+          console.error("Error toggling bot:", error);
+          botToggle.checked = !isOn;
+          showToast("Terjadi kesalahan", "error");
+        }
+      });
+
+      // Update focus status
+      updateBtn.addEventListener("click", async () => {
+        const focusStatus = focusStatusInput.value.trim();
+
+        if (!focusStatus) {
+          showToast("Focus status tidak boleh kosong", "error");
+          return;
+        }
+
+        // Show loading
+        updateBtn.disabled = true;
+        btnText.style.display = "none";
+        btnLoading.style.display = "inline-block";
+
+        try {
+          const response = await fetch("/bot/focus-status", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ focusStatus }),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            showToast("Focus status berhasil diupdate!", "success");
+          } else {
+            showToast("Gagal update focus status", "error");
+          }
+        } catch (error) {
+          console.error("Error updating focus status:", error);
+          showToast("Terjadi kesalahan", "error");
+        } finally {
+          // Hide loading
+          updateBtn.disabled = false;
+          btnText.style.display = "inline";
+          btnLoading.style.display = "none";
+        }
+      });
+
+      // Load whitelist
+      async function loadWhitelist() {
+        try {
+          const response = await fetch("/bot/whitelist");
+          const data = await response.json();
+
+          if (data.success) {
+            // Clear all inputs first
+            [number1, number2, number3, number4, number5].forEach((input) => {
+              input.value = "";
+            });
+
+            // Fill in current whitelist
+            const inputs = [number1, number2, number3, number4, number5];
+            data.whitelist.forEach((number, index) => {
+              if (inputs[index]) {
+                inputs[index].value = number;
+              }
+            });
+          }
+        } catch (error) {
+          console.error("Error loading whitelist:", error);
+        }
+      }
+
+      // Save whitelist
+      saveWhitelistBtn.addEventListener("click", async () => {
+        // Collect all numbers
+        const numbers = [
+          number1.value,
+          number2.value,
+          number3.value,
+          number4.value,
+          number5.value,
+        ].filter((num) => num.trim().length > 0); // Filter out empty fields
+
+        // Validate at least one number
+        if (numbers.length === 0) {
+          showToast("Minimal harus ada 1 nomor WhatsApp", "error");
+          return;
+        }
+
+        // Show loading
+        saveWhitelistBtn.disabled = true;
+        whitelistBtnText.style.display = "none";
+        whitelistBtnLoading.style.display = "inline-block";
+
+        try {
+          const response = await fetch("/bot/whitelist", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ numbers: numbers }),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            showToast(
+              `Whitelist berhasil diupdate! (${data.count} nomor)`,
+              "success",
+            );
+          } else {
+            showToast(data.message || "Gagal update whitelist", "error");
+          }
+        } catch (error) {
+          console.error("Error saving whitelist:", error);
+          showToast("Terjadi kesalahan", "error");
+        } finally {
+          // Hide loading
+          saveWhitelistBtn.disabled = false;
+          whitelistBtnText.style.display = "inline";
+          whitelistBtnLoading.style.display = "none";
+        }
+      });
+
+      // Load AI configuration
+      async function loadAIConfig() {
+        try {
+          const response = await fetch("/bot/ai-config");
+          const data = await response.json();
+
+          if (data.success) {
+            // Set provider
+            if (data.config.provider === "openai") {
+              providerOpenAI.checked = true;
+            } else {
+              providerOpenRouter.checked = true;
+            }
+
+            // Set model
+            aiModel.value = data.config.model;
+
+            // Note: We don't load API key for security
+          }
+        } catch (error) {
+          console.error("Error loading AI config:", error);
+        }
+      }
+
+      // Save AI configuration
+      saveAIConfigBtn.addEventListener("click", async () => {
+        const provider = providerOpenRouter.checked ? "openrouter" : "openai";
+        const model = aiModel.value;
+        const apiKey = aiApiKey.value.trim();
+
+        // Validate API key if provided
+        if (apiKey && apiKey.length < 20) {
+          showToast("API key terlalu pendek", "error");
+          return;
+        }
+
+        // Show loading
+        saveAIConfigBtn.disabled = true;
+        aiConfigBtnText.style.display = "none";
+        aiConfigBtnLoading.style.display = "inline-block";
+
+        try {
+          const body = {
+            provider: provider,
+            model: model,
+          };
+
+          // Only include API key if user entered one
+          if (apiKey) {
+            body.apiKey = apiKey;
+          }
+
+          const response = await fetch("/bot/ai-config", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            showToast(
+              `AI Config updated! Provider: ${data.config.provider}, Model: ${data.config.model}`,
+              "success",
+            );
+            // Clear API key field after save
+            aiApiKey.value = "";
+          } else {
+            showToast(data.message || "Gagal update AI config", "error");
+          }
+        } catch (error) {
+          console.error("Error saving AI config:", error);
+          showToast("Terjadi kesalahan", "error");
+        } finally {
+          // Hide loading
+          saveAIConfigBtn.disabled = false;
+          aiConfigBtnText.style.display = "inline";
+          aiConfigBtnLoading.style.display = "none";
+        }
+      });
+
+      // ========================================
+      // VIP CONTACTS MANAGEMENT
+      // ========================================
+
+      const vipContactsList = document.getElementById("vipContactsList");
+      const vipPhoneNumberInput = document.getElementById("vipPhoneNumber");
+      const vipNameInput = document.getElementById("vipName");
+      const vipRelationshipInput = document.getElementById("vipRelationship");
+      const addVIPBtn = document.getElementById("addVIPBtn");
+      const addVIPBtnText = document.getElementById("addVIPBtnText");
+      const addVIPBtnLoading = document.getElementById("addVIPBtnLoading");
+
+      // Load VIP contacts
+      async function loadVIPContacts() {
+        try {
+          const response = await fetch("/bot/vip-contacts");
+          const data = await response.json();
+
+          if (data.success) {
+            if (data.vipContacts.length === 0) {
+              vipContactsList.innerHTML = `
+                <div style="
+                  text-align: center;
+                  padding: 20px;
+                  color: rgba(255, 255, 255, 0.5);
+                  font-size: 14px;
+                ">
+                  Belum ada VIP contact
+                </div>
+              `;
+            } else {
+              vipContactsList.innerHTML = data.vipContacts
+                .map(
+                  (contact) => `
+                <div style="
+                  background: rgba(255, 255, 255, 0.1);
+                  border-radius: 12px;
+                  padding: 12px 16px;
+                  margin-bottom: 8px;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                ">
+                  <div>
+                    <div style="color: white; font-weight: 600; margin-bottom: 4px;">
+                      ${contact.name}
+                    </div>
+                    <div style="color: rgba(255, 255, 255, 0.6); font-size: 13px;">
+                      📱 ${contact.phoneNumber}
+                      ${contact.relationship ? ` • ${contact.relationship}` : ""}
+                    </div>
+                  </div>
+                  <button 
+                    onclick="removeVIPContact('${contact.phoneNumber}')"
+                    style="
+                      background: rgba(255, 59, 48, 0.3);
+                      border: 1px solid rgba(255, 59, 48, 0.5);
+                      color: #ff3b30;
+                      border-radius: 8px;
+                      padding: 6px 12px;
+                      cursor: pointer;
+                      font-size: 12px;
+                      font-weight: 600;
+                      transition: all 0.2s;
+                    "
+                    onmouseover="this.style.background='rgba(255, 59, 48, 0.5)'"
+                    onmouseout="this.style.background='rgba(255, 59, 48, 0.3)'"
+                  >
+                    Hapus
+                  </button>
+                </div>
+              `,
+                )
+                .join("");
+            }
+          }
+        } catch (error) {
+          console.error("Error loading VIP contacts:", error);
+          vipContactsList.innerHTML = `
+            <div style="
+              text-align: center;
+              padding: 20px;
+              color: rgba(255, 59, 48, 0.8);
+              font-size: 14px;
+            ">
+              Gagal memuat VIP contacts
+            </div>
+          `;
+        }
+      }
+
+      // Add VIP contact
+      addVIPBtn.addEventListener("click", async function () {
+        const phoneNumber = vipPhoneNumberInput.value.trim();
+        const name = vipNameInput.value.trim();
+        const relationship = vipRelationshipInput.value.trim();
+
+        if (!phoneNumber || !name) {
+          alert("Nomor WhatsApp dan Nama harus diisi!");
+          return;
+        }
+
+        addVIPBtnText.style.display = "none";
+        addVIPBtnLoading.style.display = "inline";
+
+        try {
+          const response = await fetch("/bot/vip-contacts", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              phoneNumber: phoneNumber,
+              name: name,
+              relationship: relationship,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            // Clear inputs
+            vipPhoneNumberInput.value = "";
+            vipNameInput.value = "";
+            vipRelationshipInput.value = "";
+
+            // Reload VIP contacts list
+            await loadVIPContacts();
+
+            alert(`✅ ${name} berhasil ditambahkan sebagai VIP contact!`);
+          } else {
+            alert(`❌ Gagal menambahkan VIP contact: ${data.message}`);
+          }
+        } catch (error) {
+          console.error("Error adding VIP contact:", error);
+          alert("❌ Terjadi kesalahan saat menambahkan VIP contact");
+        } finally {
+          addVIPBtnText.style.display = "inline";
+          addVIPBtnLoading.style.display = "none";
+        }
+      });
+
+      // Remove VIP contact (global function for onclick)
+      window.removeVIPContact = async function (phoneNumber) {
+        if (!confirm(`Hapus nomor ${phoneNumber} dari VIP contacts?`)) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`/bot/vip-contacts/${phoneNumber}`, {
+            method: "DELETE",
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            await loadVIPContacts();
+            alert(`✅ VIP contact berhasil dihapus!`);
+          } else {
+            alert(`❌ Gagal menghapus VIP contact: ${data.message}`);
+          }
+        } catch (error) {
+          console.error("Error removing VIP contact:", error);
+          alert("❌ Terjadi kesalahan saat menghapus VIP contact");
+        }
+      };
+
+      // Initialize on page load
+      loadWhatsAppStatus();
+      loadBotStatus();
+      loadFocusStatus();
+      loadWhitelist();
+      loadVIPContacts();
+      loadAIConfig();
+
+      // Refresh WhatsApp status every 3 seconds
+      setInterval(loadWhatsAppStatus, 3000);
+
+      // Refresh bot status every 5 seconds
+      setInterval(loadBotStatus, 5000);
+    </script>
+  </body>
+</html>
