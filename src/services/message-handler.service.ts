@@ -94,6 +94,7 @@ class MessageHandlerService {
       const cleanMessage = normalizeMessage(messageBody);
       if (isSpam(cleanMessage)) {
         console.log("⚠️ Spam detected - ignoring");
+        await whatsappService.sendMessage(from, "Jangan Spam yaaa 🥲");
         return;
       }
 
