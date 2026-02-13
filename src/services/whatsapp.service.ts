@@ -95,6 +95,17 @@ class WhatsAppService {
       this.qrCode = null;
     });
 
+    // State changes (more reliable than 'disconnected' event for logout detection)
+    this.client.on("change_state", (state: string) => {
+      console.log(`🔄 WhatsApp state changed: ${state}`);
+      if (state !== "CONNECTED") {
+        this.isReady = false;
+        this.phoneNumber = null;
+        this.qrCode = null;
+        console.log("⚠️ Auto-detected disconnect via state change");
+      }
+    });
+
     // Incoming messages
     this.client.on("message", async (message: WAMessage) => {
       if (this.messageCallback) {
@@ -148,10 +159,39 @@ class WhatsAppService {
   /**
    * Get connection status
    */
-  public getConnectionStatus(): ConnectionStatus {
+  public async getConnectionStatus(): Promise<ConnectionStatus> {
+    // Verify actual connection state instead of just relying on cached flag
+    // This fixes the issue where 'disconnected' event doesn't fire when unlinking from phone
+    let actuallyConnected = this.isReady;
+
+    if (this.client && this.isReady) {
+      try {
+        // Use getState() to check actual connection state (not cached)
+        // Possible states: CONFLICT, CONNECTED, DEPRECATED_VERSION, OPENING, PAIRING, PROXYBLOCK, SMB_TOS_BLOCK, TIMEOUT, TOS_BLOCK, UNLAUNCHED, UNPAIRED, UNPAIRED_IDLE
+        const state = await this.client.getState();
+
+        if (state !== "CONNECTED") {
+          actuallyConnected = false;
+          this.isReady = false;
+          this.phoneNumber = null;
+          console.log(
+            `⚠️ Detected disconnect (state: ${state}), updating status`,
+          );
+        }
+      } catch (error) {
+        // Error accessing client state means disconnected
+        actuallyConnected = false;
+        this.isReady = false;
+        this.phoneNumber = null;
+        console.log(
+          "⚠️ Detected disconnect (error accessing state), updating status",
+        );
+      }
+    }
+
     return {
-      connected: this.isReady,
-      ready: this.isReady,
+      connected: actuallyConnected,
+      ready: actuallyConnected,
       phoneNumber: this.phoneNumber || undefined,
     };
   }

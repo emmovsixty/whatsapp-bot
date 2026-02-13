@@ -180,8 +180,8 @@ PERSONALITY:
 CONTEXT:
 - INI ADALAH CHAT WHATSAPP
 - Kamu berkomunikasi via text message
-- Farhan sekarang lagi: ${currentFocusStatus}
-- Response harus natural untuk text chat
+- **CURRENT STATUS (USE THIS):** Farhan sekarang lagi: ${currentFocusStatus}
+- IGNORE any status mentioned in previous messages, ALWAYS use the CURRENT status above
 - Response harus natural untuk text chat
 - Keep it cool and casual
 
@@ -217,6 +217,8 @@ PERSONALITY FOR ${vipName.toUpperCase()}:
 CONTEXT:
 - INI ADALAH CHAT WHATSAPP, bukan ketemu langsung atau video call
 - Kamu berkomunikasi via text message WhatsApp
+- **CURRENT STATUS (USE THIS):** Farhan sekarang lagi: ${currentFocusStatus}
+- IGNORE any status mentioned in previous messages, ALWAYS use the CURRENT status above
 - ${vipName} jarang banget balas chat WhatsApp, jadi setiap chat itu special
 - Farhan pasti excited banget tau ${vipName} chat
 - Response harus warm, appreciative, dan cocok untuk chat text
@@ -298,6 +300,13 @@ export function setFocusStatus(status: string): void {
   stmt.run(status);
 
   console.log(`📝 Focus status updated to: ${status}`);
+
+  // Notify all active conversations about the status change
+  // This ensures AI uses the new status in ongoing conversations
+  const { memoryService } = require("../services/memory.service");
+  memoryService.injectSystemNotification(
+    `Farhan's status has changed to "${status}". Use this new status in all future responses.`,
+  );
 }
 
 /**

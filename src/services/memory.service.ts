@@ -208,6 +208,29 @@ class MemoryService {
     const result = stmt.get(phoneNumber) as { count: number };
     return result.count;
   }
+
+  /**
+   * Inject a system notification to all active conversations
+   * Used when focus status changes to inform AI about the update
+   */
+  public injectSystemNotification(notification: string): void {
+    // Get all unique phone numbers with active conversations
+    const stmt = db.prepare("SELECT DISTINCT phone_number FROM conversations");
+    const phoneNumbers = stmt.all() as Array<{ phone_number: string }>;
+
+    // Add system notification to each active conversation
+    phoneNumbers.forEach(({ phone_number }) => {
+      this.addMessage(
+        phone_number,
+        "assistant",
+        `[SYSTEM NOTIFICATION] ${notification}`,
+      );
+    });
+
+    console.log(
+      `📢 System notification sent to ${phoneNumbers.length} active conversations`,
+    );
+  }
 }
 
 // Export singleton instance

@@ -41,9 +41,12 @@ export async function getQRCode(_req: Request, res: Response): Promise<void> {
  * GET /whatsapp/status
  * Get WhatsApp connection status
  */
-export function getWhatsAppStatus(_req: Request, res: Response): void {
+export async function getWhatsAppStatus(
+  _req: Request,
+  res: Response,
+): Promise<void> {
   try {
-    const status = whatsappService.getConnectionStatus();
+    const status = await whatsappService.getConnectionStatus();
 
     res.json({
       success: true,
