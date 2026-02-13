@@ -601,9 +601,16 @@
                 checked
                 style="margin-right: 8px"
               />
-              <span style="color: white">OpenRouter (FREE)</span>
+              <span style="color: white">OpenRouter (Default)</span>
             </label>
-            <label style="display: flex; align-items: center; cursor: pointer">
+            <label
+              style="
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                opacity: 0.7;
+              "
+            >
               <input
                 type="radio"
                 name="provider"
@@ -614,6 +621,16 @@
               <span style="color: white">OpenAI</span>
             </label>
           </div>
+          <p
+            style="
+              color: rgba(255, 255, 255, 0.6);
+              font-size: 12px;
+              margin-top: 8px;
+            "
+          >
+            API Key diambil otomatis dari file .env (OPENROUTER_API_KEY atau
+            OPENAI_API_KEY)
+          </p>
         </div>
 
         <!-- Model Selection -->
@@ -648,31 +665,26 @@
           </select>
         </div>
 
-        <!-- API Key -->
-        <div class="input-group">
-          <label for="aiApiKey">API Key</label>
-          <input
-            type="password"
-            id="aiApiKey"
-            placeholder="sk-or-v1-... atau sk-..."
-            maxlength="200"
-          />
-          <p
+        <!-- API Key is managed via .env -->
+        <div class="input-group" style="opacity: 0.7">
+          <label>API Key</label>
+          <div
             style="
+              padding: 12px 16px;
+              border: 2px solid rgba(255, 255, 255, 0.1);
+              border-radius: 12px;
+              background: rgba(255, 255, 255, 0.05);
               color: rgba(255, 255, 255, 0.6);
-              font-size: 12px;
-              margin-top: 4px;
+              font-size: 14px;
+              font-family: &quot;Inter&quot;, sans-serif;
+              display: flex;
+              align-items: center;
+              gap: 8px;
             "
           >
-            OpenRouter:
-            <a
-              href="https://openrouter.ai/keys"
-              target="_blank"
-              style="color: #667eea"
-              >Get API Key</a
-            >
-            (FREE!)
-          </p>
+            <span style="font-size: 16px">🔒</span>
+            <span>Managed via .env file (Secure)</span>
+          </div>
         </div>
 
         <button class="btn" id="saveAIConfigBtn">
@@ -1001,22 +1013,15 @@
         aiConfigBtnLoading.style.display = "inline-block";
 
         try {
-          const body = {
-            provider: provider,
-            model: model,
-          };
-
-          // Only include API key if user entered one
-          if (apiKey) {
-            body.apiKey = apiKey;
-          }
-
           const response = await fetch("/bot/ai-config", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify({
+              provider,
+              model,
+            }),
           });
 
           const data = await response.json();

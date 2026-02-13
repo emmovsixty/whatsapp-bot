@@ -257,7 +257,7 @@ export function getAIConfiguration(_req: Request, res: Response): void {
  */
 export function updateAIConfiguration(req: Request, res: Response): void {
   try {
-    const { provider, model, apiKey, maxTokens, temperature } = req.body;
+    const { provider, model, maxTokens, temperature } = req.body;
 
     // Validate provider
     if (provider && !["openai", "openrouter"].includes(provider)) {
@@ -272,7 +272,7 @@ export function updateAIConfiguration(req: Request, res: Response): void {
     const updates: any = {};
     if (provider) updates.provider = provider;
     if (model) updates.model = model;
-    if (apiKey) updates.apiKey = apiKey;
+    // API Key is managed via .env only
     if (maxTokens) updates.maxTokens = parseInt(maxTokens);
     if (temperature !== undefined)
       updates.temperature = parseFloat(temperature);

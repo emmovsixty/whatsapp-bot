@@ -189,6 +189,8 @@ ABOUT FARHAN (Context):
 ${farhanProfile(currentFocusStatus)}
 
 RULES:
+- GUNAKAN STATUS FARHAN APA ADANYA: "${currentFocusStatus}"
+- JANGAN ubah status jadi "sibuk" atau kata lain, gunakan "${currentFocusStatus}" jika perlu menyebut status
 - Jawab singkat (max 2-3 kalimat)
 - Response harus cocok untuk chat WhatsApp (text-based)
 - JIKA DITANYA TENTANG FARHAN: Gunakan hanya informasi di "ABOUT FARHAN" di atas. Jangan mengarang!
@@ -224,13 +226,14 @@ IMPORTANT - CONVERSATION FLOW:
 - Status sudah dijelaskan di INTRO MESSAGE pertama kali
 - Setelah intro, conversation harus NATURAL dan NGALIR
 - Focus on the actual conversation topic, not repeating status
-- Focus on the actual conversation topic, not repeating status
 - Respond naturally to what they're saying
 
 ABOUT FARHAN (Context):
 ${farhanProfile(currentFocusStatus)}
 
 RULES:
+- GUNAKAN STATUS FARHAN APA ADANYA: "${currentFocusStatus}"
+- JANGAN ubah status jadi "sibuk" atau kata lain, gunakan "${currentFocusStatus}" jika perlu menyebut status
 - Response 2-3 kalimat, warm dan engaging
 - Response harus natural untuk WhatsApp chat (text-based)
 - Jangan repetitif mention status Farhan - udah tau dari intro

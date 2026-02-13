@@ -19,7 +19,10 @@ interface AIConfig {
 let currentConfig: AIConfig = {
   provider:
     (process.env.AI_PROVIDER as "openai" | "openrouter") || "openrouter",
-  apiKey: process.env.OPENAI_API_KEY || "",
+  apiKey:
+    (process.env.AI_PROVIDER === "openai"
+      ? process.env.OPENAI_API_KEY
+      : process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY) || "",
   model: process.env.OPENAI_MODEL || "meta-llama/llama-3.3-70b-instruct",
   baseURL: process.env.OPENAI_BASE_URL || undefined,
   maxTokens: parseInt(process.env.MAX_TOKENS || "500"),
@@ -72,9 +75,17 @@ export function getAIConfig(): AIConfig {
  * Update AI configuration and reinitialize client
  */
 export function updateAIConfig(config: Partial<AIConfig>): void {
+  // Prevent API key update from client
+  const { apiKey, ...safeConfig } = config;
+
   currentConfig = {
     ...currentConfig,
-    ...config,
+    ...safeConfig,
+    // Always enforce .env API key based on selected provider
+    apiKey:
+      ((safeConfig.provider || currentConfig.provider) === "openai"
+        ? process.env.OPENAI_API_KEY
+        : process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY) || "",
   };
 
   initializeClient();
