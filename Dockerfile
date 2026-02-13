@@ -1,8 +1,10 @@
-FROM node:18-slim
+FROM node:20-slim
 
-# Install dependencies for Puppeteer
-# Install dependencies for Puppeteer
+# Install dependencies for Puppeteer AND better-sqlite3 (Python + build tools)
 RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
     chromium \
     fonts-ipafont-gothic \
     fonts-wqy-zenhei \
