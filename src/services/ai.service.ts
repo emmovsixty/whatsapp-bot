@@ -48,9 +48,12 @@ class AIService {
         temperature: aiConfig.temperature,
       });
 
-      const aiResponse =
+      let aiResponse =
         completion.choices[0]?.message?.content?.trim() ||
         "Maaf, aku lagi bingung nih 🤔";
+
+      // Add AI prefix to distinguish from human
+      aiResponse = `🤖 ${aiResponse}`;
 
       console.log(
         `✅ AI response generated (${completion.usage?.total_tokens} tokens used)`,

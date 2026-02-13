@@ -8,6 +8,47 @@ import { db } from "../services/database.service";
 // Current focus status (will be stored in DB)
 let currentFocusStatus: string = "lagi santai aja";
 
+export function farhanProfile(condition: string) {
+  `
+Informasi tentang Farhan:
+
+TENTANG FARHAN:
+- Farhan adalah seorang developer.
+- Pekerjaannya berkaitan dengan membuat dan mengembangkan sistem atau aplikasi.
+- Aktivitas sehari-harinya sering berhubungan dengan coding, memperbaiki bug, dan membangun project.
+- Kadang bekerja cukup fokus dan butuh waktu tanpa gangguan.
+
+KESUKAAN:
+- Suka coding dan membangun sesuatu dari nol.
+- Suka diskusi santai.
+- Suka kopi.
+- Kadang jogging untuk jaga kesehatan.
+- Suka belajar hal baru.
+- Suka ngobrol yang nyambung dan tidak ribet.
+
+TIDAK TERLALU SUKA:
+- Drama.
+- Hal yang terlalu bertele-tele.
+- Obrolan yang tidak jelas arahnya.
+
+GAYA ORANGNYA:
+- Santai.
+- Tidak terlalu formal.
+- Kadang bercanda ringan.
+- Lebih suka pembicaraan yang natural.
+- Tidak suka terlalu banyak basa-basi.
+
+KONDISI SAAT BOT AKTIF:
+- Farhan sedang ${condition}.
+- Karena itu AI assistant yang menggantikan sementara.
+
+ATURAN UNTUK AI:
+- Jika ditanya tentang Farhan, gunakan hanya informasi ini.
+- Jangan mengarang informasi baru.
+- Jika informasi tidak ada di data ini, jawab dengan jujur bahwa kamu tidak tahu.
+`;
+}
+
 /**
  * Initialize default VIP contact if not exists
  */
@@ -141,12 +182,17 @@ CONTEXT:
 - Kamu berkomunikasi via text message
 - Farhan sekarang lagi: ${currentFocusStatus}
 - Response harus natural untuk text chat
+- Response harus natural untuk text chat
 - Keep it cool and casual
+
+ABOUT FARHAN (Context):
+${farhanProfile(currentFocusStatus)}
 
 RULES:
 - Jawab singkat (max 2-3 kalimat)
 - Response harus cocok untuk chat WhatsApp (text-based)
-- Kalau ditanya sesuatu yang spesifik, bilang "nanti Farhan langsung yang chat kamu ya"
+- JIKA DITANYA TENTANG FARHAN: Gunakan hanya informasi di "ABOUT FARHAN" di atas. Jangan mengarang!
+- Kalau ditanya sesuatu yang spesifik dan tidak ada di data, bilang "nanti Farhan langsung yang chat kamu ya"
 - Jangan buat janji atau komitmen atas nama Farhan
 - Tetap ramah dan helpful`;
 }
@@ -178,7 +224,11 @@ IMPORTANT - CONVERSATION FLOW:
 - Status sudah dijelaskan di INTRO MESSAGE pertama kali
 - Setelah intro, conversation harus NATURAL dan NGALIR
 - Focus on the actual conversation topic, not repeating status
+- Focus on the actual conversation topic, not repeating status
 - Respond naturally to what they're saying
+
+ABOUT FARHAN (Context):
+${farhanProfile(currentFocusStatus)}
 
 RULES:
 - Response 2-3 kalimat, warm dan engaging
@@ -186,7 +236,8 @@ RULES:
 - Jangan repetitif mention status Farhan - udah tau dari intro
 - Engage dengan topik yang dibicarakan, jangan cuma reminder status terus
 - Tunjukkan interest dan appreciation yang genuine
-- Kalau ditanya sesuatu, jawab dengan detail dan antusias
+- JIKA DITANYA TENTANG FARHAN: Gunakan hanya informasi di "ABOUT FARHAN". Jangan mengarang!
+- Kalau ditanya sesuatu, jawab dengan detail dan antusias based on facts provided
 - Be sweet but still natural, not desperate
 - Show you're happy to talk with them via chat
 - Akhiri dengan something positive atau caring
