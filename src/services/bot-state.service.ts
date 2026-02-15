@@ -7,7 +7,6 @@ import { db } from "./database.service";
 
 class BotStateService {
   private isActive: boolean = false;
-
   /**
    * Turn bot ON
    */
@@ -110,6 +109,13 @@ class BotStateService {
     `);
     const results = stmt.all(oneDayAgo) as { phone_number: string }[];
     return results.map((r) => r.phone_number);
+  }
+
+  public setSelectedOptionMenu(phoneNumber: string, status: boolean): void {
+    const stmt = db.prepare(
+      "INSERT INTO status_selected (phone_number, status) VALUES (?,?)",
+    );
+    stmt.run(phoneNumber, status);
   }
 }
 

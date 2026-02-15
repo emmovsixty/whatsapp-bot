@@ -884,7 +884,11 @@
           if (data.success) {
             showToast("Focus status berhasil diupdate!", "success");
           } else {
-            showToast("Gagal update focus status", "error");
+            if (data.message) {
+              showToast(`Error: ${data.message}`, "error");
+            } else {
+              showToast("Gagal update focus status", "error");
+            }
           }
         } catch (error) {
           console.error("Error updating focus status:", error);

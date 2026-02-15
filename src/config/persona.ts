@@ -4,6 +4,7 @@
  */
 
 import { db } from "../services/database.service";
+import { memoryService } from "../services/memory.service";
 
 // Current focus status (will be stored in DB)
 let currentFocusStatus: string = "lagi santai aja";
@@ -303,10 +304,24 @@ export function setFocusStatus(status: string): void {
 
   // Notify all active conversations about the status change
   // This ensures AI uses the new status in ongoing conversations
-  const { memoryService } = require("../services/memory.service");
-  memoryService.injectSystemNotification(
-    `Farhan's status has changed to "${status}". Use this new status in all future responses.`,
-  );
+  try {
+    memoryService.injectSystemNotification(
+      `Farhan's status has changed to "${status}". Use this new status in all future responses.`,
+    );
+  } catch (error) {
+    console.error("⚠️ Failed to inject status notification:", error);
+  }
+}
+
+/**
+ * Get after-hours message for VIP contacts (after 9 PM)
+ */
+export function getVIPAfterHoursMessage(vipName: string): string {
+  return `Haii ${vipName}! 💕 Wah masih belum tidur ternyata~ Aku lihat udah malam nih, jaga kesehatanmu yaaa 🌙
+
+Tunggu sebentar yaa, aku kasih tau Farhan dulu kalau kamu chat. HP nya lagi di mode silent soalnya, tapi aku pastiin dia tau kamu menghubungi! 💖
+
+Di sana aman kan? Udah makan belum? 🥰`;
 }
 
 /**

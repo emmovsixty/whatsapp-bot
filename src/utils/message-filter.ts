@@ -43,18 +43,22 @@ export function isQuestion(message: string): boolean {
   });
 }
 
+// function isNumeric(value: any): boolean {
+//   return !isNaN(value) && isNaN(parseFloat(value));
+// }
 /**
  * Check if message is likely spam or should be ignored
  */
 export function isSpam(message: string): boolean {
-  // Empty messages
-  if (!message || message.trim().length === 0) {
+  const msgLength = message.trim().length; // Empty messages
+  console.log("cek tipe input: ", typeof message);
+  if (!message || msgLength === 0) {
     return true;
   }
 
   // Very short messages (single character/emoji)
-  if (message.trim().length === 1) {
-    return true;
+  if (msgLength === 1 && (message == "1" || message == "2")) {
+    return false;
   }
 
   // Repeated characters (e.g., "aaaaaaa")

@@ -114,7 +114,7 @@ export function getCurrentFocusStatus(_req: Request, res: Response): void {
  */
 export function updateFocusStatus(req: Request, res: Response): void {
   try {
-    const { status } = req.body;
+    const { focusStatus: status } = req.body;
 
     if (!status || typeof status !== "string") {
       res.status(400).json({
